@@ -1,0 +1,38 @@
+{
+	// Wrangler configuration — https://developers.cloudflare.com/workers/wrangler/configuration/
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "clockify-slack-bot",
+	"main": "src/index.ts",
+	// Pin to a stability date; bump when you want newer compat flags
+	"compatibility_date": "2025-04-01",
+	// Enables Workers Logpush / tail logs in the dashboard (free tier)
+	"observability": {
+		"enabled": true
+	},
+	// KV namespace — stores AES-GCM encrypted per-user Clockify config
+	// First-time setup: wrangler kv namespace create USER_DATA
+	// Then replace the id below with the one returned by that command.
+	"kv_namespaces": [
+		{
+			"binding": "USER_DATA",
+			"id": "e5c9ea3ea79249eaa1b2a0e34661bb9d",
+			"remote": true
+		}
+	],
+	// Rate limiter — 10 requests per 60 seconds per Slack user
+	// namespace_id "1001" is Cloudflare's built-in rate limiting namespace (no setup needed)
+	"ratelimits": [
+		{
+			"name": "RATE_LIMITER",
+			"namespace_id": "1001",
+			"simple": {
+				"limit": 10,
+				"period": 60
+			},
+		}
+	],
+	// Secrets (never committed) — set each with: wrangler secret put <NAME>
+	//   SLACK_SIGNING_SECRET  ← Slack app → Basic Information → Signing Secret
+	//   SLACK_BOT_TOKEN       ← Slack app → OAuth & Permissions → Bot User OAuth Token
+	//   ENCRYPTION_KEY        ← generate with: openssl rand -base64 32
+}

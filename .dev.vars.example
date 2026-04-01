@@ -1,0 +1,7 @@
+# Example local development secrets for Wrangler.
+# Copy this file to .dev.vars and fill in real values for local dev.
+# .dev.vars is gitignored — never commit it.
+SLACK_SIGNING_SECRET=YOUR_SLACK_SIGNING_SECRET
+SLACK_BOT_TOKEN=YOUR_SLACK_BOT_TOKEN
+# Generate with: openssl rand -base64 32
+ENCRYPTION_KEY=YOUR_ENCRYPTION_KEY

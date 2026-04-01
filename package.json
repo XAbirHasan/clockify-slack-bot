@@ -1,0 +1,30 @@
+{
+  "name": "clockify-slack-bot",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=24.14.1",
+    "npm": ">=9.5.0"
+  },
+  "type": "module",
+  "scripts": {
+    "setup": "npx tsx setup.ts",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "cf-typegen": "wrangler types",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint 'src/**/*.ts'",
+    "test": "vitest run --reporter=tree"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250101.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.5.0",
+    "eslint": "^10.1.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.8.0",
+    "typescript-eslint": "^8.58.0",
+    "vitest": "^4.1.2",
+    "wrangler": "^4.0.0"
+  }
+}

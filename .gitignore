@@ -1,0 +1,11 @@
+# Local Cloudflare Workers dev secrets — never commit real credentials
+.dev.vars
+
+# Wrangler cache & build output
+.wrangler/
+
+# Generated Worker type declarations
+worker-configuration.d.ts
+
+# Node modules
+node_modules/
