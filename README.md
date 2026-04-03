@@ -93,3 +93,9 @@ Numbered lists work too:
 - **Deleting** your message removes all entries logged from it
 
 ---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on setting up a dev environment, submitting pull requests, and reporting issues.
+
+---
