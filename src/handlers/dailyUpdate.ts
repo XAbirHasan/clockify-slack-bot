@@ -2,6 +2,7 @@ import type { Env } from '../env';
 import type { SlackMessageEvent } from '../slack/types';
 import { createTimeEntry, getTodayEntries, deleteTimeEntry } from '../clockify/api';
 import { parseMessage } from '../parser/message';
+import { parseDate } from '../parser/date';
 import { safePost, requireConfig } from './common';
 import { addReaction } from '../slack/api';
 
@@ -17,33 +18,41 @@ const fmtDuration = (minutes: number): string => {
 };
 
 export async function handleDailyUpdate(env: Env, event: SlackMessageEvent): Promise<void> {
-  const entries = parseMessage(event.text);
+  const { date: dateStr, entries } = parseMessage(event.text);
   if (entries.length === 0) return;
-
   console.log(`[update] ${event.user} in ${event.channel} — ${entries.length} block(s)`);
+
 
   const config = await requireConfig(env, event);
   if (config === null) return;
 
   const messageDate = new Date(parseFloat(event.ts) * 1000);
-  console.log(`[clockify] ${event.user} processing ${entries.length} entries for ${messageDate.toISOString().slice(0, 10)}, start: ${config.workStartHour}h UTC`);
+  const targetDate = dateStr ? parseDate(dateStr, messageDate) : messageDate;
+
+  if (!targetDate) {
+    await safePost(env, event.channel, `<@${event.user}> Invalid date: \`${dateStr}\`. Use \`DD-MM-YYYY\`, \`today\`, or \`yesterday\` (max 60 days ago).`);
+    return;
+  }
+
+  const dateKey = targetDate.toISOString().slice(0, 10);
+  console.log(`[clockify] ${event.user} processing ${entries.length} entries for ${dateKey}`);
 
   try {
-    const existing = await getTodayEntries(config.workspaceId, config.clockifyUserId, config.clockifyApiKey, messageDate);
+    const existing = await getTodayEntries(config.workspaceId, config.clockifyUserId, config.clockifyApiKey, targetDate);
     if (existing.length > 0) {
-      console.log(`[clockify] ${event.user} clearing ${existing.length} existing entries`);
+      console.log(`[clockify] ${event.user} clearing ${existing.length} existing entries for ${dateKey}`);
       await Promise.all(existing.map(e => deleteTimeEntry(config.workspaceId, e.id, config.clockifyApiKey)));
     }
   } catch (err) {
-    console.error(`[clockify] ${event.user} failed to clear existing entries: ${String(err)}`);
-    await safePost(env, event.channel, 'Failed to clear existing entries. Aborting to avoid duplicates.');
+    console.error(`[clockify] ${event.user} failed to clear entries for ${dateKey}: ${String(err)}`);
+    await safePost(env, event.channel, `Failed to clear existing entries for ${dateKey}. Aborting.`);
     return;
   }
 
   let cursorMs = Date.UTC(
-    messageDate.getUTCFullYear(),
-    messageDate.getUTCMonth(),
-    messageDate.getUTCDate(),
+    targetDate.getUTCFullYear(),
+    targetDate.getUTCMonth(),
+    targetDate.getUTCDate(),
     config.workStartHour, 0, 0, 0,
   );
 
@@ -90,6 +99,6 @@ export async function handleDailyUpdate(env: Env, event: SlackMessageEvent): Pro
     }
   }
   if (failed.length > 0) {
-    await safePost(env, event.channel, `<@${event.user}> Some entries failed:\n${failed.join('\n')}`);
+    await safePost(env, event.channel, `<@${event.user}> Some entries failed for ${dateKey}:\n${failed.join('\n')}`);
   }
 }
