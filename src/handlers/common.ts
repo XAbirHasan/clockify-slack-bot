@@ -53,7 +53,7 @@ export function buildMessageHelpText(config: UserConfig | null): string {
     '[yesterday]\n\n' +
     exampleLines + '\n' +
     '```\n' +
-    '• Optional top header: `[today]`, `[yesterday]`, or `[DD-MM-YYYY]`\n' +
+    '• Optional top header: `[yesterday]` or `[DD-MM-YYYY]`\n' +
     '• Duration formats: `8h` `30m` `8h30m` `8:30` `8.5`'
   );
 }

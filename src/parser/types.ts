@@ -6,5 +6,5 @@ export interface ParsedEntry {
 
 export interface ParseResult {
   entries: ParsedEntry[];
-  date: string | undefined; // Optional global date header: today, yesterday, or DD-MM-YYYY
+  date: string | undefined; // Optional global date header: yesterday, or DD-MM-YYYY
 }
