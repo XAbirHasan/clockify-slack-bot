@@ -3,3 +3,8 @@ export interface ParsedEntry {
   durationMinutes: number;
   tasks: string[];
 }
+
+export interface ParseResult {
+  entries: ParsedEntry[];
+  date: string | undefined; // Optional global date header: today, yesterday, or DD-MM-YYYY
+}

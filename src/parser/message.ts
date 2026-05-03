@@ -1,11 +1,14 @@
-import type { ParsedEntry } from './types';
+import type { ParsedEntry, ParseResult } from './types';
 import { parseDuration } from './duration';
 import { decodeSlackText } from './util';
 
 /**
  * Parse a Slack message into daily-update entries.
  *
- * Format:
+ * Supports an optional global date header on the first non-empty line:
+ *   [yesterday]
+ *
+ * Followed by project blocks:
  *   [project-name] [8h]
  *   1. Task one
  *       a. Subtask A
@@ -21,22 +24,37 @@ import { decodeSlackText } from './util';
  *       a. Subtask A
  *       b. Subtask B
  */
-export function parseMessage(raw: string): ParsedEntry[] {
+export function parseMessage(raw: string): ParseResult {
   const decoded = decodeSlackText(raw).replace(/^```\n?/, '').replace(/\n?```$/, '');
   const lines = decoded.split('\n');
-  const headerRe = /^\[([^\]]+)\]\s*\[([^\]]+)\]$/;
+  const projectHeaderRe = /^\[([^\]]+)\]\s*\[([^\]]+)\]$/;
+  const dateHeaderRe = /^\[([^\]]+)\]$/;
   // Top-level: numbered "1." / "1)" or Slack bullet "•"
   const topTaskRe = /^(\d+[.)]\s*|•\s*)/;
   // Subtask: lettered "a." / "a)" or Slack sub-bullet "◦"
   const subtaskRe = /^([a-z][.)]\s*|◦\s*)/i;
+
   const entries: ParsedEntry[] = [];
+  let globalDate: string | undefined = undefined;
   let current: ParsedEntry | null = null;
+  let firstContentLine = true;
 
   for (const line of lines) {
     const trimmed = line.trim();
     if (!trimmed) continue;
 
-    const headerMatch = headerRe.exec(trimmed);
+    if (firstContentLine) {
+      firstContentLine = false;
+      const dateMatch = dateHeaderRe.exec(trimmed);
+      const projectMatch = projectHeaderRe.exec(trimmed);
+
+      if (dateMatch && !projectMatch) {
+        globalDate = dateMatch[1].trim();
+        continue;
+      }
+    }
+
+    const headerMatch = projectHeaderRe.exec(trimmed);
     if (headerMatch) {
       if (current !== null) entries.push(current);
       const durationMinutes = parseDuration(headerMatch[2]!.trim());
@@ -63,5 +81,5 @@ export function parseMessage(raw: string): ParsedEntry[] {
   }
 
   if (current !== null) entries.push(current);
-  return entries;
+  return { entries, date: globalDate };
 }
