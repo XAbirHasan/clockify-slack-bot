@@ -61,6 +61,8 @@ curl -H "X-Api-Key: YOUR_API_KEY" \
 Send a message like this in the channel:
 
 ```
+[yesterday]
+
 [project-1] [6h]
 • Reviewed PR for feature X
   ◦ added details in the PR description
@@ -72,6 +74,16 @@ Send a message like this in the channel:
 • Fixed flaky test
 ```
 
+### Date Scoping
+You can optionally add a **global date header** on the first line of your message in a single bracket: `[today]`, `[yesterday]`, or `[DD-MM-YYYY]`. 
+
+- This date applies to **all project blocks** within that same message.
+- If no header is provided, the bot defaults to the message's current date.
+- **Restrictions**: 
+  - Only dates from the **past 60 days** are supported.
+  - **Future dates** are rejected.
+
+### Project Formats
 Numbered lists work too:
 
 ```

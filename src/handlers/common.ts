@@ -50,9 +50,11 @@ export function buildMessageHelpText(config: UserConfig | null): string {
   return (
     '*Daily update* — send any time:\n' +
     '```\n' +
+    '[yesterday]\n\n' +
     exampleLines + '\n' +
     '```\n' +
-    'Duration formats: `8h` `30m` `8h30m` `8:30` `8.5`'
+    '• Optional top header: `[today]`, `[yesterday]`, or `[DD-MM-YYYY]`\n' +
+    '• Duration formats: `8h` `30m` `8h30m` `8:30` `8.5`'
   );
 }
 
