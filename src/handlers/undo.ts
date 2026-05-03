@@ -1,6 +1,6 @@
 import type { Env } from '../env';
 import type { SlackMessageEvent } from '../slack/types';
-import { getTodayEntries, deleteTimeEntry } from '../clockify/api';
+import { getTimeEntries, deleteTimeEntry } from '../clockify/api';
 import { safePost, requireConfig } from './common';
 
 export async function handleUndo(env: Env, event: SlackMessageEvent): Promise<void> {
@@ -10,7 +10,7 @@ export async function handleUndo(env: Env, event: SlackMessageEvent): Promise<vo
   const now = new Date(parseFloat(event.ts) * 1000);
   let entries;
   try {
-    entries = await getTodayEntries(config.workspaceId, config.clockifyUserId, config.clockifyApiKey, now);
+    entries = await getTimeEntries(config.workspaceId, config.clockifyUserId, config.clockifyApiKey, now);
   } catch (err) {
     console.error(`[undo] ${event.user} failed to fetch entries: ${String(err)}`);
     await safePost(env, event.channel, 'Failed to fetch entries from Clockify.');

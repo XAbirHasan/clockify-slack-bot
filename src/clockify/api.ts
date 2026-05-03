@@ -26,7 +26,7 @@ export async function createTimeEntry(
   }
 }
 
-export async function getTodayEntries(
+export async function getTimeEntries(
   workspaceId: string,
   userId: string,
   apiKey: string,
@@ -36,7 +36,7 @@ export async function getTodayEntries(
   const end = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1)).toISOString();
   const url = `${BASE_URL}/workspaces/${workspaceId}/user/${userId}/time-entries?start=${start}&end=${end}`;
   const resp = await fetch(url, { headers: { 'X-Api-Key': apiKey } });
-  if (!resp.ok) throw new Error(`Clockify getTodayEntries failed: ${resp.status}`);
+  if (!resp.ok) throw new Error(`Clockify getTimeEntries failed: ${resp.status}`);
   const json = await resp.json() as unknown[];
   return json.filter(isClockifyTimeEntry);
 }

@@ -13,35 +13,19 @@ function toInputFormat(date: Date): string {
   const year = date.getUTCFullYear();
   return `${day}-${month}-${year}`;
 }
-
 describe('parseDate', () => {
+  // Use an arbitrary base date for all relative tests
   const base = new Date('2024-05-03T15:30:45Z');
 
   describe('Relative Dates', () => {
-    it('parses "today" correctly relative to any base date', () => {
-      const result = parseDate('today', base);
-      expect(result?.toISOString()).toBe(getStartOfUtcDay(base).toISOString());
-    });
-
     it('parses "yesterday" correctly relative to any base date', () => {
       const result = parseDate('yesterday', base);
       expect(result?.toISOString()).toBe(getStartOfUtcDay(base, -1).toISOString());
     });
-
-    it('handles "today" even at the very end of the day', () => {
-      const lateBase = new Date('2024-05-03T23:59:59Z');
-      const result = parseDate('today', lateBase);
-      expect(result?.toISOString()).toBe(getStartOfUtcDay(lateBase).toISOString());
-    });
-
-    it('handles "today" even at the very beginning of the day', () => {
-      const earlyBase = new Date('2024-05-03T00:00:01Z');
-      const result = parseDate('today', earlyBase);
-      expect(result?.toISOString()).toBe(getStartOfUtcDay(earlyBase).toISOString());
-    });
   });
 
   describe('Absolute Dates (DD-MM-YYYY)', () => {
+
     it('parses a specific date string correctly', () => {
       const target = new Date('2024-04-10T00:00:00Z');
       const result = parseDate(toInputFormat(target), base);

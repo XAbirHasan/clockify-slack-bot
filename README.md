@@ -75,7 +75,7 @@ Send a message like this in the channel:
 ```
 
 ### Date Scoping
-You can optionally add a **global date header** on the first line of your message in a single bracket: `[today]`, `[yesterday]`, or `[DD-MM-YYYY]`. 
+You can optionally add a **global date header** on the first line of your message in a single bracket: `[yesterday]` or `[DD-MM-YYYY]`. 
 
 - This date applies to **all project blocks** within that same message.
 - If no header is provided, the bot defaults to the message's current date.

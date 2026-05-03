@@ -1,6 +1,6 @@
 import type { Env } from '../env';
 import type { SlackMessageDeletedEvent } from '../slack/types';
-import { getTodayEntries, deleteTimeEntry } from '../clockify/api';
+import { getTimeEntries, deleteTimeEntry } from '../clockify/api';
 import { tryLoadConfig } from '../store/ops';
 import { parseMessage } from '../parser/message';
 import { parseDate } from '../parser/date';
@@ -33,7 +33,7 @@ export async function handleMessageDeleted(env: Env, event: SlackMessageDeletedE
 
   let entries;
   try {
-    entries = await getTodayEntries(config.workspaceId, config.clockifyUserId, config.clockifyApiKey, targetDate);
+    entries = await getTimeEntries(config.workspaceId, config.clockifyUserId, config.clockifyApiKey, targetDate);
   } catch (err) {
     console.error(`[delete] ${userId} failed to fetch entries for ${dateKey}: ${String(err)}`);
     return;
