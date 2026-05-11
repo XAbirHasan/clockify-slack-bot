@@ -50,10 +50,14 @@ export function buildMessageHelpText(config: UserConfig | null): string {
   return (
     '*Daily update* — send any time:\n' +
     '```\n' +
-    '[yesterday]\n\n' +
     exampleLines + '\n' +
     '```\n' +
-    '• Optional top header: `[yesterday]` or `[DD-MM-YYYY]`\n' +
+    'To log for a *specific date*:\n' +
+    '```\n' +
+    '[09-05-2026]\n\n' +
+    exampleLines + '\n' +
+    '```\n' +
+    '• Optional top header: `[yesterday]` or `[DD-MM-YYYY]` (up to 60 days ago) — defaults to today\n' +
     '• Duration formats: `8h` `30m` `8h30m` `8:30` `8.5`'
   );
 }
